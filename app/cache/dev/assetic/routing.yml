@@ -1,0 +1,5 @@
+_assetic:
+    resource: .
+    type: assetic
+_app:
+    resource: /home/web/Proyectos/mi-cupon.com/app/config/routing_dev.yml
