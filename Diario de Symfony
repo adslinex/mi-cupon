@@ -1,0 +1,186 @@
+Si en el otro diario de instalación llevaba 3 o 4 veces, en este ya son 6 o 7.
+Sigo los pasos de alterior diario y voy añadiendo experiencia.
+
+Symfony ha cambiado de versión, ya es Symfony2 y el libro acaba de sacar hoy (21/04/2014) la versión 2.4
+
+La última instalación la he hecho sin git y cuando casca ya no eres capaz de volver atrás. hay que hacerlo con git.
+
+Ya lo he intentado con  Cupon.local y Planilla. Ahora lo intento con mi-cupon.
+
+Siguiendo el manual al pie de la letra.
+
+3.1.2 Instalando Symfony 2.4 con Composer
+
+$ sudo composer create-project symfony/framework-standard-edition "/Proyectos/mi-cupon.com" 2.4.*
+
+Sin sudo da problemas de permisos.
+
+A las preguntas, todo enter. Ya se que hay que cambiarlo luego.
+
+Preparo el directorio Proyectos para que el usuario adslinex pueda trabajar sin problemas:
+sudo chown -R antonio:antonio Proyectos
+
+
+3.1.3 Comprobando la instalación realizada
+
+$ php app/console
+
+Ok
+
+3.1.4 Instalando la aplicación Cupon
+Para poder ver el código se puede instalar cupon ya acabado:
+$ sudo git clone https://github.com/javiereguiluz/Cupon.git Cupon
+$ cd cupon
+$ git checkout 2.4
+$ sudo composer install
+
+o a través del navegador en el propio repositorio:
+https://github.com/javiereguiluz/Cupon
+
+3.2 Configurando el entorno de ejecución
+
+El archivo /etc/host queda de la siguiente manera para poder provar los dos entornos
+
+127.0.0.1	localhost
+127.0.1.1	antonio-OptiPlex-745
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+127.0.0.1	mi-cupon.com
+127.0.0.1	cupon
+
+Para la configuración de apache2 y ya después de mucha experiencia, hay que crear dos archivos en el directorio /etc/apache2/sites-available cada uno con la configuración de su entorno:
+mi-cupon.com
+
+<VirtualHost *:80>
+    ServerName      mi-cupon.com
+    ServerAlias     www.mi-cupon.com
+
+ #   SetEnv SYMFONY__DATABASE__USER     "cupon"
+ #   SetEnv SYMFONY__DATABASE__PASSWORD "cupon"
+
+    DocumentRoot    /home/web/Proyectos/mi-cupon.com/web
+    DirectoryIndex  app.php
+
+    <Directory /home/web/Proyectos/mi-cupon.com/web>
+        AllowOverride None
+        Allow from All
+
+        <IfModule mod_rewrite.c>
+            Options -MultiViews
+            RewriteEngine On
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ app.php [QSA,L]
+        </IfModule>
+    </Directory>
+
+    CustomLog  /var/log/apache2/mi-cupon.com-access.log combined
+
+    KeepAlive            On
+    MaxKeepAliveRequests 200
+    KeepAliveTimeout     5
+
+    AddOutputFilterByType DEFLATE text/css text/plain text/html application/xhtml+xml text/xml application/xml
+
+    <IfModule mod_headers.c>
+        Header append Vary User-Agent env=!dont-vary
+
+        ExpiresActive On
+        ExpiresDefault "now plus 1 week"
+        ExpiresByType image/x-icon "now plus 1 month"
+        ExpiresByType image/gif    "now plus 1 month"
+        ExpiresByType image/png    "now plus 1 month"
+        ExpiresByType image/jpeg   "now plus 1 month"
+    </IfModule>
+</VirtualHost>
+
+Seguro que le sobran opciones o le falta alguna. a día de hoy funcionan.
+y el otro exactamente igual sustituyendo mi-cupon.com por cupon
+
+Se pueden crear más con más configuraciones
+Luego en el directorio /etc/apache2/sites-enabled creamos los enlaces simbólicos a cada uno de ellos. Los enlaces se cargan por orden alfabético. En este directorio ahora mismo hay tres enlaces simbólicos:
+000-default		que apunta al la configuración por defecto de apache2
+001-mi-cupon.com	que apunta a mi-cupon.com
+002-cupon		que apunta a la configuración de cupon
+
+$ sudo service apache2 restart
+ * Restarting web server apache2                                                                       ... waiting  
+Ok
+
+$ sudo chmod -R 777 app/logs
+$ sudo chmod -R 777 app/cache
+(si no da error en el navegador)
+
+y en el navegador: http://mi-cupon.com/app_dev.php
+
+Ok -> me pregunta por la configuración (http://cupon/app_dev.php los mismos pasos y Ok)
+
+Intento subir al repositorio la primera revisión.
+
+Creo un repositorio en https://github.com/adslinex
+Datos del repositorio:
+
+usuario: adslinex
+password: sofa321hark
+
+Repositorio: mi-cupon
+
+Copiado de la propia página de github:
+Quick setup — if you've done this kind of thing before
+or
+
+    HTTP
+    SSH
+
+We recommend that every repository has a README, LICENSE, and .gitignore.
+Create a new repository on the command line
+
+touch README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/adslinex/mi-cupon.git
+git push -u origin master
+
+Push an existing repository from the command line
+
+git remote add origin https://github.com/adslinex/mi-cupon.git
+git push -u origin master
+Fin del copiado
+
+Editado: Debería haber creado antes el .gitignore (sirve para indicarle que no suba determinados directorios, como los vendor)
+
+Dentro de mi-cupon:
+touch README.md
+$ git init
+$ git add README.md
+$ git commit -m "first commit"
+$ git remote add origin https://github.com/adslinex/mi-cupon.git
+$ git push -u origin master
+Username for 'https://github.com': adslinex
+Password for 'https://adslinex@github.com': 
+To https://github.com/adslinex/mi-cupon.git
+   0ab69a6..c65a640  master -> master
+...
+ create mode 100644 vendor/twig/twig/doc/tests/index.rst
+ create mode 100644 vendor/twig/twig/doc/tests/iterable.rst
+ create mode 100644 vendor/twig/twig/doc/tests/null.rst
+...
+ create mode 100644 web/favicon.ico
+ create mode 100644 web/robots.txt
+$ git push
+Username for 'https://github.com': adslinex
+Password for 'https://adslinex@github.com': 
+To https://github.com/adslinex/mi-cupon.git
+   0ab69a6..c65a640  master -> master
+
+Debería haber creado antes el .gitignore (sirve para indicarle que no suba determinados directorios, como los vendor)
+No me aclaro yo con git, svn lo llevaba mejor. Voy a instalar eclipse. No va eclipse con Git, na
+Voy a seguir las instrucciones del libro:
+
+
