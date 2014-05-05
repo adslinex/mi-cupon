@@ -1,0 +1,6 @@
+# src/Cupon/TiendaBundle/Resources/config/routing.yml
+tienda_portada:
+    path:     /{ciudad}/tiendas/{tienda}
+    defaults: { _controller: TiendaBundle:Default:portada }
+
+

@@ -230,6 +230,9 @@ class appDevDebugProjectContainer extends Container
             'twig.controller.exception' => 'getTwig_Controller_ExceptionService',
             'twig.exception_listener' => 'getTwig_ExceptionListenerService',
             'twig.extension.acme.demo' => 'getTwig_Extension_Acme_DemoService',
+            'twig.extension.cupon' => 'getTwig_Extension_CuponService',
+            'twig.extension.debug' => 'getTwig_Extension_DebugService',
+            'twig.extension.text' => 'getTwig_Extension_TextService',
             'twig.loader' => 'getTwig_LoaderService',
             'twig.translation.extractor' => 'getTwig_Translation_ExtractorService',
             'uri_signer' => 'getUriSignerService',
@@ -542,6 +545,7 @@ class appDevDebugProjectContainer extends Container
     {
         $this->services['debug.templating.engine.php'] = $instance = new \Symfony\Bundle\FrameworkBundle\Templating\TimedPhpEngine($this->get('templating.name_parser'), $this, $this->get('templating.loader'), $this->get('debug.stopwatch'), $this->get('templating.globals'));
 
+        $instance->setCharset('UTF-8');
         $instance->setHelpers(array('slots' => 'templating.helper.slots', 'assets' => 'templating.helper.assets', 'request' => 'templating.helper.request', 'session' => 'templating.helper.session', 'router' => 'templating.helper.router', 'actions' => 'templating.helper.actions', 'code' => 'templating.helper.code', 'translator' => 'templating.helper.translator', 'form' => 'templating.helper.form', 'stopwatch' => 'templating.helper.stopwatch', 'logout_url' => 'templating.helper.logout_url', 'security' => 'templating.helper.security', 'assetic' => 'assetic.helper.dynamic'));
 
         return $instance;
@@ -590,7 +594,7 @@ class appDevDebugProjectContainer extends Container
         $b = new \Doctrine\DBAL\Configuration();
         $b->setSQLLogger($a);
 
-        return $this->services['doctrine.dbal.default_connection'] = $this->get('doctrine.dbal.connection_factory')->createConnection(array('driver' => 'pdo_mysql', 'host' => '127.0.0.1', 'port' => NULL, 'dbname' => 'symfony', 'user' => 'root', 'password' => NULL, 'charset' => 'UTF8', 'driverOptions' => array()), $b, new \Symfony\Bridge\Doctrine\ContainerAwareEventManager($this), array());
+        return $this->services['doctrine.dbal.default_connection'] = $this->get('doctrine.dbal.connection_factory')->createConnection(array('driver' => 'pdo_mysql', 'host' => 'localhost', 'port' => NULL, 'dbname' => 'mi-cupon', 'user' => 'mi-cupon', 'password' => 'mi-cupon', 'charset' => 'UTF8', 'driverOptions' => array()), $b, new \Symfony\Bridge\Doctrine\ContainerAwareEventManager($this), array());
     }
 
     /**
@@ -603,8 +607,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getDoctrine_Orm_DefaultEntityManagerService()
     {
-        $a = new \Doctrine\Common\Cache\ArrayCache();
-        $a->setNamespace('sf2orm_default_4eb261dc55621825f347d7e1eb84fff63c5294efc79996bbb548c9069d877278');
+        $a = $this->get('annotation_reader');
 
         $b = new \Doctrine\Common\Cache\ArrayCache();
         $b->setNamespace('sf2orm_default_4eb261dc55621825f347d7e1eb84fff63c5294efc79996bbb548c9069d877278');
@@ -612,20 +615,31 @@ class appDevDebugProjectContainer extends Container
         $c = new \Doctrine\Common\Cache\ArrayCache();
         $c->setNamespace('sf2orm_default_4eb261dc55621825f347d7e1eb84fff63c5294efc79996bbb548c9069d877278');
 
-        $d = new \Doctrine\ORM\Configuration();
-        $d->setEntityNamespaces(array());
-        $d->setMetadataCacheImpl($a);
-        $d->setQueryCacheImpl($b);
-        $d->setResultCacheImpl($c);
-        $d->setMetadataDriverImpl(new \Doctrine\ORM\Mapping\Driver\DriverChain());
-        $d->setProxyDir('/home/web/Proyectos/mi-cupon.com/app/cache/dev/doctrine/orm/Proxies');
-        $d->setProxyNamespace('Proxies');
-        $d->setAutoGenerateProxyClasses(true);
-        $d->setClassMetadataFactoryName('Doctrine\\ORM\\Mapping\\ClassMetadataFactory');
-        $d->setDefaultRepositoryClassName('Doctrine\\ORM\\EntityRepository');
-        $d->setNamingStrategy(new \Doctrine\ORM\Mapping\DefaultNamingStrategy());
+        $d = new \Doctrine\Common\Cache\ArrayCache();
+        $d->setNamespace('sf2orm_default_4eb261dc55621825f347d7e1eb84fff63c5294efc79996bbb548c9069d877278');
 
-        $this->services['doctrine.orm.default_entity_manager'] = $instance = call_user_func(array('Doctrine\\ORM\\EntityManager', 'create'), $this->get('doctrine.dbal.default_connection'), $d);
+        $e = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($a, array(0 => '/home/web/Proyectos/mi-cupon.com/src/Cupon/OfertaBundle/Entity', 1 => '/home/web/Proyectos/mi-cupon.com/src/Cupon/CiudadBundle/Entity', 2 => '/home/web/Proyectos/mi-cupon.com/src/Cupon/TiendaBundle/Entity', 3 => '/home/web/Proyectos/mi-cupon.com/src/Cupon/UsuarioBundle/Entity'));
+
+        $f = new \Doctrine\ORM\Mapping\Driver\DriverChain();
+        $f->addDriver($e, 'Cupon\\OfertaBundle\\Entity');
+        $f->addDriver($e, 'Cupon\\CiudadBundle\\Entity');
+        $f->addDriver($e, 'Cupon\\TiendaBundle\\Entity');
+        $f->addDriver($e, 'Cupon\\UsuarioBundle\\Entity');
+
+        $g = new \Doctrine\ORM\Configuration();
+        $g->setEntityNamespaces(array('OfertaBundle' => 'Cupon\\OfertaBundle\\Entity', 'CiudadBundle' => 'Cupon\\CiudadBundle\\Entity', 'TiendaBundle' => 'Cupon\\TiendaBundle\\Entity', 'UsuarioBundle' => 'Cupon\\UsuarioBundle\\Entity'));
+        $g->setMetadataCacheImpl($b);
+        $g->setQueryCacheImpl($c);
+        $g->setResultCacheImpl($d);
+        $g->setMetadataDriverImpl($f);
+        $g->setProxyDir('/home/web/Proyectos/mi-cupon.com/app/cache/dev/doctrine/orm/Proxies');
+        $g->setProxyNamespace('Proxies');
+        $g->setAutoGenerateProxyClasses(true);
+        $g->setClassMetadataFactoryName('Doctrine\\ORM\\Mapping\\ClassMetadataFactory');
+        $g->setDefaultRepositoryClassName('Doctrine\\ORM\\EntityRepository');
+        $g->setNamingStrategy(new \Doctrine\ORM\Mapping\DefaultNamingStrategy());
+
+        $this->services['doctrine.orm.default_entity_manager'] = $instance = call_user_func(array('Doctrine\\ORM\\EntityManager', 'create'), $this->get('doctrine.dbal.default_connection'), $g);
 
         $this->get('doctrine.orm.default_manager_configurator')->configure($instance);
 
@@ -1375,7 +1389,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getLocaleListenerService()
     {
-        return $this->services['locale_listener'] = new \Symfony\Component\HttpKernel\EventListener\LocaleListener('en', $this->get('router', ContainerInterface::NULL_ON_INVALID_REFERENCE), $this->get('request_stack'));
+        return $this->services['locale_listener'] = new \Symfony\Component\HttpKernel\EventListener\LocaleListener('es', $this->get('router', ContainerInterface::NULL_ON_INVALID_REFERENCE), $this->get('request_stack'));
     }
 
     /**
@@ -2228,7 +2242,7 @@ class appDevDebugProjectContainer extends Container
 
         $this->services['swiftmailer.mailer.default.transport.real'] = $instance = new \Swift_Transport_EsmtpTransport(new \Swift_Transport_StreamBuffer(new \Swift_StreamFilters_StringReplacementFilterFactory()), array(0 => $a), $this->get('swiftmailer.mailer.default.transport.eventdispatcher'));
 
-        $instance->setHost('127.0.0.1');
+        $instance->setHost('localhost');
         $instance->setPort(25);
         $instance->setEncryption(NULL);
         $instance->setTimeout(30);
@@ -2247,7 +2261,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getTemplatingService()
     {
-        $this->services['templating'] = $instance = new \Symfony\Bundle\TwigBundle\Debug\TimedTwigEngine($this->get('twig'), $this->get('templating.name_parser'), $this->get('templating.locator'), $this->get('debug.stopwatch'), $this->get('templating.globals'));
+        $this->services['templating'] = $instance = new \Symfony\Bundle\TwigBundle\Debug\TimedTwigEngine($this->get('twig'), $this->get('templating.name_parser'), $this->get('templating.locator'), $this->get('debug.stopwatch'));
 
         $instance->setDefaultEscapingStrategy(array(0 => $instance, 1 => 'guessDefaultEscapingStrategy'));
 
@@ -2883,6 +2897,9 @@ class appDevDebugProjectContainer extends Container
     {
         $this->services['twig'] = $instance = new \Twig_Environment($this->get('twig.loader'), array('debug' => true, 'strict_variables' => true, 'exception_controller' => 'twig.controller.exception:showAction', 'autoescape_service' => NULL, 'autoescape_service_method' => NULL, 'cache' => '/home/web/Proyectos/mi-cupon.com/app/cache/dev/twig', 'charset' => 'UTF-8', 'paths' => array()));
 
+        $instance->addExtension($this->get('twig.extension.text'));
+        $instance->addExtension($this->get('twig.extension.debug'));
+        $instance->addExtension($this->get('twig.extension.cupon'));
         $instance->addExtension(new \Symfony\Bundle\SecurityBundle\Twig\Extension\LogoutUrlExtension($this->get('templating.helper.logout_url')));
         $instance->addExtension(new \Symfony\Bridge\Twig\Extension\SecurityExtension($this->get('security.context', ContainerInterface::NULL_ON_INVALID_REFERENCE)));
         $instance->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($this->get('translator')));
@@ -2895,11 +2912,12 @@ class appDevDebugProjectContainer extends Container
         $instance->addExtension(new \Symfony\Bridge\Twig\Extension\ExpressionExtension());
         $instance->addExtension(new \Symfony\Bridge\Twig\Extension\HttpKernelExtension($this->get('fragment.handler')));
         $instance->addExtension(new \Symfony\Bridge\Twig\Extension\FormExtension(new \Symfony\Bridge\Twig\Form\TwigRenderer(new \Symfony\Bridge\Twig\Form\TwigRendererEngine(array(0 => 'form_div_layout.html.twig')), $this->get('form.csrf_provider', ContainerInterface::NULL_ON_INVALID_REFERENCE))));
-        $instance->addExtension(new \Twig_Extension_Debug());
         $instance->addExtension(new \Symfony\Bundle\AsseticBundle\Twig\AsseticExtension($this->get('assetic.asset_factory'), $this->get('templating.name_parser'), true, array(), array(), $this->get('assetic.value_supplier.default', ContainerInterface::NULL_ON_INVALID_REFERENCE)));
         $instance->addExtension(new \Doctrine\Bundle\DoctrineBundle\Twig\DoctrineExtension());
         $instance->addExtension($this->get('twig.extension.acme.demo'));
         $instance->addGlobal('app', $this->get('templating.globals'));
+        $instance->addGlobal('ciudad_por_defecto', 'barcelona');
+        $instance->addGlobal('directorio_imagenes', '/uploads/images/');
 
         return $instance;
     }
@@ -2931,6 +2949,45 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
+     * Gets the 'twig.extension.cupon' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return Cupon\OfertaBundle\Twig\Extension\CuponExtension A Cupon\OfertaBundle\Twig\Extension\CuponExtension instance.
+     */
+    protected function getTwig_Extension_CuponService()
+    {
+        return $this->services['twig.extension.cupon'] = new \Cupon\OfertaBundle\Twig\Extension\CuponExtension();
+    }
+
+    /**
+     * Gets the 'twig.extension.debug' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return Twig_Extensions_Extension_Debug A Twig_Extensions_Extension_Debug instance.
+     */
+    protected function getTwig_Extension_DebugService()
+    {
+        return $this->services['twig.extension.debug'] = new \Twig_Extensions_Extension_Debug();
+    }
+
+    /**
+     * Gets the 'twig.extension.text' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return Twig_Extensions_Extension_Text A Twig_Extensions_Extension_Text instance.
+     */
+    protected function getTwig_Extension_TextService()
+    {
+        return $this->services['twig.extension.text'] = new \Twig_Extensions_Extension_Text();
+    }
+
+    /**
      * Gets the 'twig.loader' service.
      *
      * This service is shared.
@@ -2947,6 +3004,10 @@ class appDevDebugProjectContainer extends Container
         $instance->addPath('/home/web/Proyectos/mi-cupon.com/vendor/symfony/symfony/src/Symfony/Bundle/TwigBundle/Resources/views', 'Twig');
         $instance->addPath('/home/web/Proyectos/mi-cupon.com/vendor/symfony/swiftmailer-bundle/Symfony/Bundle/SwiftmailerBundle/Resources/views', 'Swiftmailer');
         $instance->addPath('/home/web/Proyectos/mi-cupon.com/vendor/doctrine/doctrine-bundle/Doctrine/Bundle/DoctrineBundle/Resources/views', 'Doctrine');
+        $instance->addPath('/home/web/Proyectos/mi-cupon.com/src/Cupon/OfertaBundle/Resources/views', 'Oferta');
+        $instance->addPath('/home/web/Proyectos/mi-cupon.com/src/Cupon/CiudadBundle/Resources/views', 'Ciudad');
+        $instance->addPath('/home/web/Proyectos/mi-cupon.com/src/Cupon/TiendaBundle/Resources/views', 'Tienda');
+        $instance->addPath('/home/web/Proyectos/mi-cupon.com/src/Cupon/UsuarioBundle/Resources/views', 'Usuario');
         $instance->addPath('/home/web/Proyectos/mi-cupon.com/src/Acme/DemoBundle/Resources/views', 'AcmeDemo');
         $instance->addPath('/home/web/Proyectos/mi-cupon.com/vendor/symfony/symfony/src/Symfony/Bundle/WebProfilerBundle/Resources/views', 'WebProfiler');
         $instance->addPath('/home/web/Proyectos/mi-cupon.com/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/views', 'SensioDistribution');
@@ -2979,7 +3040,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getUriSignerService()
     {
-        return $this->services['uri_signer'] = new \Symfony\Component\HttpKernel\UriSigner('ThisTokenIsNotSoSecretChangeIt');
+        return $this->services['uri_signer'] = new \Symfony\Component\HttpKernel\UriSigner('3095c57ee1675bd751e4f158dd48992dae4e8004');
     }
 
     /**
@@ -3398,7 +3459,7 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getParameterBag()
     {
@@ -3430,7 +3491,12 @@ class appDevDebugProjectContainer extends Container
                 'SwiftmailerBundle' => 'Symfony\\Bundle\\SwiftmailerBundle\\SwiftmailerBundle',
                 'AsseticBundle' => 'Symfony\\Bundle\\AsseticBundle\\AsseticBundle',
                 'DoctrineBundle' => 'Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle',
+                'DoctrineFixturesBundle' => 'Doctrine\\Bundle\\FixturesBundle\\DoctrineFixturesBundle',
                 'SensioFrameworkExtraBundle' => 'Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle',
+                'OfertaBundle' => 'Cupon\\OfertaBundle\\OfertaBundle',
+                'CiudadBundle' => 'Cupon\\CiudadBundle\\CiudadBundle',
+                'TiendaBundle' => 'Cupon\\TiendaBundle\\TiendaBundle',
+                'UsuarioBundle' => 'Cupon\\UsuarioBundle\\UsuarioBundle',
                 'AcmeDemoBundle' => 'Acme\\DemoBundle\\AcmeDemoBundle',
                 'WebProfilerBundle' => 'Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle',
                 'SensioDistributionBundle' => 'Sensio\\Bundle\\DistributionBundle\\SensioDistributionBundle',
@@ -3439,17 +3505,18 @@ class appDevDebugProjectContainer extends Container
             'kernel.charset' => 'UTF-8',
             'kernel.container_class' => 'appDevDebugProjectContainer',
             'database_driver' => 'pdo_mysql',
-            'database_host' => '127.0.0.1',
+            'database_host' => 'localhost',
             'database_port' => NULL,
-            'database_name' => 'symfony',
-            'database_user' => 'root',
-            'database_password' => NULL,
+            'database_name' => 'mi-cupon',
+            'database_user' => 'mi-cupon',
+            'database_password' => 'mi-cupon',
             'mailer_transport' => 'smtp',
-            'mailer_host' => '127.0.0.1',
+            'mailer_host' => 'localhost',
             'mailer_user' => NULL,
             'mailer_password' => NULL,
-            'locale' => 'en',
-            'secret' => 'ThisTokenIsNotSoSecretChangeIt',
+            'locale' => 'es',
+            'secret' => '3095c57ee1675bd751e4f158dd48992dae4e8004',
+            'cupon.ciudad_por_defecto' => 'barcelona',
             'controller_resolver.class' => 'Symfony\\Bundle\\FrameworkBundle\\Controller\\ControllerResolver',
             'controller_name_converter.class' => 'Symfony\\Bundle\\FrameworkBundle\\Controller\\ControllerNameParser',
             'response_listener.class' => 'Symfony\\Component\\HttpKernel\\EventListener\\ResponseListener',
@@ -3503,7 +3570,7 @@ class appDevDebugProjectContainer extends Container
             'debug.stopwatch.class' => 'Symfony\\Component\\Stopwatch\\Stopwatch',
             'debug.container.dump' => '/home/web/Proyectos/mi-cupon.com/app/cache/dev/appDevDebugProjectContainer.xml',
             'debug.controller_resolver.class' => 'Symfony\\Component\\HttpKernel\\Controller\\TraceableControllerResolver',
-            'kernel.secret' => 'ThisTokenIsNotSoSecretChangeIt',
+            'kernel.secret' => '3095c57ee1675bd751e4f158dd48992dae4e8004',
             'kernel.http_method_override' => true,
             'kernel.trusted_hosts' => array(
 
@@ -3511,7 +3578,7 @@ class appDevDebugProjectContainer extends Container
             'kernel.trusted_proxies' => array(
 
             ),
-            'kernel.default_locale' => 'en',
+            'kernel.default_locale' => 'es',
             'session.class' => 'Symfony\\Component\\HttpFoundation\\Session\\Session',
             'session.flashbag.class' => 'Symfony\\Component\\HttpFoundation\\Session\\Flash\\FlashBag',
             'session.attribute_bag.class' => 'Symfony\\Component\\HttpFoundation\\Session\\Attribute\\AttributeBag',
@@ -3815,7 +3882,7 @@ class appDevDebugProjectContainer extends Container
             'swiftmailer.mailer.default.delivery.enabled' => true,
             'swiftmailer.mailer.default.transport.smtp.encryption' => NULL,
             'swiftmailer.mailer.default.transport.smtp.port' => 25,
-            'swiftmailer.mailer.default.transport.smtp.host' => '127.0.0.1',
+            'swiftmailer.mailer.default.transport.smtp.host' => 'localhost',
             'swiftmailer.mailer.default.transport.smtp.username' => NULL,
             'swiftmailer.mailer.default.transport.smtp.password' => NULL,
             'swiftmailer.mailer.default.transport.smtp.auth_mode' => NULL,

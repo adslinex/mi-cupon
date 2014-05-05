@@ -1,0 +1,12 @@
+# Rutas de las páginas estáticas del sitio                         ESTO NO VA
+pagina_ayuda:
+    path:     /ayuda
+    defaults: { template: 'OfertaBundle:Default:ayuda.html.twig' }
+
+pagina_privacidad:
+    path:     /privacidad
+    defaults: { template: 'OfertaBundle:Default:privacidad.html.twig' }
+
+pagina_condiciones:
+    path:     /terminos-y-condiciones
+    defaults: { template: 'OfertaBundle:Default:condiciones.html.twig' }

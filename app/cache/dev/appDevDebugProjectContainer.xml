@@ -15,7 +15,12 @@
       <parameter key="SwiftmailerBundle">Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle</parameter>
       <parameter key="AsseticBundle">Symfony\Bundle\AsseticBundle\AsseticBundle</parameter>
       <parameter key="DoctrineBundle">Doctrine\Bundle\DoctrineBundle\DoctrineBundle</parameter>
+      <parameter key="DoctrineFixturesBundle">Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle</parameter>
       <parameter key="SensioFrameworkExtraBundle">Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle</parameter>
+      <parameter key="OfertaBundle">Cupon\OfertaBundle\OfertaBundle</parameter>
+      <parameter key="CiudadBundle">Cupon\CiudadBundle\CiudadBundle</parameter>
+      <parameter key="TiendaBundle">Cupon\TiendaBundle\TiendaBundle</parameter>
+      <parameter key="UsuarioBundle">Cupon\UsuarioBundle\UsuarioBundle</parameter>
       <parameter key="AcmeDemoBundle">Acme\DemoBundle\AcmeDemoBundle</parameter>
       <parameter key="WebProfilerBundle">Symfony\Bundle\WebProfilerBundle\WebProfilerBundle</parameter>
       <parameter key="SensioDistributionBundle">Sensio\Bundle\DistributionBundle\SensioDistributionBundle</parameter>
@@ -24,17 +29,18 @@
     <parameter key="kernel.charset">UTF-8</parameter>
     <parameter key="kernel.container_class">appDevDebugProjectContainer</parameter>
     <parameter key="database_driver">pdo_mysql</parameter>
-    <parameter key="database_host">127.0.0.1</parameter>
+    <parameter key="database_host">localhost</parameter>
     <parameter key="database_port">null</parameter>
-    <parameter key="database_name">symfony</parameter>
-    <parameter key="database_user">root</parameter>
-    <parameter key="database_password">null</parameter>
+    <parameter key="database_name">mi-cupon</parameter>
+    <parameter key="database_user">mi-cupon</parameter>
+    <parameter key="database_password">mi-cupon</parameter>
     <parameter key="mailer_transport">smtp</parameter>
-    <parameter key="mailer_host">127.0.0.1</parameter>
+    <parameter key="mailer_host">localhost</parameter>
     <parameter key="mailer_user">null</parameter>
     <parameter key="mailer_password">null</parameter>
-    <parameter key="locale">en</parameter>
-    <parameter key="secret">ThisTokenIsNotSoSecretChangeIt</parameter>
+    <parameter key="locale">es</parameter>
+    <parameter key="secret">3095c57ee1675bd751e4f158dd48992dae4e8004</parameter>
+    <parameter key="cupon.ciudad_por_defecto">barcelona</parameter>
     <parameter key="controller_resolver.class">Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver</parameter>
     <parameter key="controller_name_converter.class">Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser</parameter>
     <parameter key="response_listener.class">Symfony\Component\HttpKernel\EventListener\ResponseListener</parameter>
@@ -88,11 +94,11 @@
     <parameter key="debug.stopwatch.class">Symfony\Component\Stopwatch\Stopwatch</parameter>
     <parameter key="debug.container.dump">/home/web/Proyectos/mi-cupon.com/app/cache/dev/appDevDebugProjectContainer.xml</parameter>
     <parameter key="debug.controller_resolver.class">Symfony\Component\HttpKernel\Controller\TraceableControllerResolver</parameter>
-    <parameter key="kernel.secret">ThisTokenIsNotSoSecretChangeIt</parameter>
+    <parameter key="kernel.secret">3095c57ee1675bd751e4f158dd48992dae4e8004</parameter>
     <parameter key="kernel.http_method_override">true</parameter>
     <parameter key="kernel.trusted_hosts" type="collection"/>
     <parameter key="kernel.trusted_proxies" type="collection"/>
-    <parameter key="kernel.default_locale">en</parameter>
+    <parameter key="kernel.default_locale">es</parameter>
     <parameter key="session.class">Symfony\Component\HttpFoundation\Session\Session</parameter>
     <parameter key="session.flashbag.class">Symfony\Component\HttpFoundation\Session\Flash\FlashBag</parameter>
     <parameter key="session.attribute_bag.class">Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag</parameter>
@@ -388,7 +394,7 @@
     <parameter key="swiftmailer.mailer.default.delivery.enabled">true</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.encryption">null</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.port">25</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.host">127.0.0.1</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.host">localhost</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.username">null</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.password">null</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.auth_mode">null</parameter>
@@ -569,6 +575,15 @@
     <parameter key="console.command.ids" type="collection"/>
   </parameters>
   <services>
+    <service id="twig.extension.text" class="Twig_Extensions_Extension_Text">
+      <tag name="twig.extension"/>
+    </service>
+    <service id="twig.extension.debug" class="Twig_Extensions_Extension_Debug">
+      <tag name="twig.extension"/>
+    </service>
+    <service id="twig.extension.cupon" class="Cupon\OfertaBundle\Twig\Extension\CuponExtension">
+      <tag name="twig.extension"/>
+    </service>
     <service id="controller_name_converter" class="Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser" public="false">
       <tag name="monolog.logger" channel="request"/>
       <argument type="service" id="kernel"/>
@@ -582,7 +597,7 @@
     </service>
     <service id="locale_listener" class="Symfony\Component\HttpKernel\EventListener\LocaleListener">
       <tag name="kernel.event_subscriber"/>
-      <argument>en</argument>
+      <argument>es</argument>
       <argument type="service" id="router" on-invalid="ignore"/>
       <argument type="service" id="request_stack"/>
     </service>
@@ -653,7 +668,7 @@
       <argument>/home/web/Proyectos/mi-cupon.com/app/Resources</argument>
     </service>
     <service id="uri_signer" class="Symfony\Component\HttpKernel\UriSigner">
-      <argument>ThisTokenIsNotSoSecretChangeIt</argument>
+      <argument>3095c57ee1675bd751e4f158dd48992dae4e8004</argument>
     </service>
     <service id="fragment.handler" class="Symfony\Component\HttpKernel\Fragment\FragmentHandler">
       <argument type="collection"/>
@@ -1969,6 +1984,15 @@
         <argument key="paths" type="collection"/>
       </argument>
       <call method="addExtension">
+        <argument type="service" id="twig.extension.text"/>
+      </call>
+      <call method="addExtension">
+        <argument type="service" id="twig.extension.debug"/>
+      </call>
+      <call method="addExtension">
+        <argument type="service" id="twig.extension.cupon"/>
+      </call>
+      <call method="addExtension">
         <argument type="service">
           <service class="Symfony\Bundle\SecurityBundle\Twig\Extension\LogoutUrlExtension" public="false">
             <tag name="twig.extension"/>
@@ -2077,13 +2101,6 @@
       </call>
       <call method="addExtension">
         <argument type="service">
-          <service class="Twig_Extension_Debug" public="false">
-            <tag name="twig.extension"/>
-          </service>
-        </argument>
-      </call>
-      <call method="addExtension">
-        <argument type="service">
           <service class="Symfony\Bundle\AsseticBundle\Twig\AsseticExtension" public="false">
             <tag name="twig.extension"/>
             <tag name="assetic.templating.twig"/>
@@ -2109,6 +2126,14 @@
       <call method="addGlobal">
         <argument>app</argument>
         <argument type="service" id="templating.globals"/>
+      </call>
+      <call method="addGlobal">
+        <argument>ciudad_por_defecto</argument>
+        <argument>barcelona</argument>
+      </call>
+      <call method="addGlobal">
+        <argument>directorio_imagenes</argument>
+        <argument>/uploads/images/</argument>
       </call>
     </service>
     <service id="twig.translation.extractor" class="Symfony\Bridge\Twig\Translation\TwigExtractor">
@@ -2245,11 +2270,11 @@
     <service id="doctrine.dbal.default_connection" class="stdClass" factory-method="createConnection" factory-service="doctrine.dbal.connection_factory">
       <argument type="collection">
         <argument key="driver">pdo_mysql</argument>
-        <argument key="host">127.0.0.1</argument>
+        <argument key="host">localhost</argument>
         <argument key="port">null</argument>
-        <argument key="dbname">symfony</argument>
-        <argument key="user">root</argument>
-        <argument key="password">null</argument>
+        <argument key="dbname">mi-cupon</argument>
+        <argument key="user">mi-cupon</argument>
+        <argument key="password">mi-cupon</argument>
         <argument key="charset">UTF8</argument>
         <argument key="driverOptions" type="collection"/>
       </argument>
@@ -2307,7 +2332,12 @@
       <argument type="service">
         <service class="Doctrine\ORM\Configuration" public="false">
           <call method="setEntityNamespaces">
-            <argument type="collection"/>
+            <argument type="collection">
+              <argument key="OfertaBundle">Cupon\OfertaBundle\Entity</argument>
+              <argument key="CiudadBundle">Cupon\CiudadBundle\Entity</argument>
+              <argument key="TiendaBundle">Cupon\TiendaBundle\Entity</argument>
+              <argument key="UsuarioBundle">Cupon\UsuarioBundle\Entity</argument>
+            </argument>
           </call>
           <call method="setMetadataCacheImpl">
             <argument type="service">
@@ -2338,7 +2368,64 @@
           </call>
           <call method="setMetadataDriverImpl">
             <argument type="service">
-              <service class="Doctrine\ORM\Mapping\Driver\DriverChain" public="false"/>
+              <service class="Doctrine\ORM\Mapping\Driver\DriverChain" public="false">
+                <call method="addDriver">
+                  <argument type="service">
+                    <service class="Doctrine\ORM\Mapping\Driver\AnnotationDriver" public="false">
+                      <argument type="service" id="annotation_reader"/>
+                      <argument type="collection">
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/OfertaBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/CiudadBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/TiendaBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/UsuarioBundle/Entity</argument>
+                      </argument>
+                    </service>
+                  </argument>
+                  <argument>Cupon\OfertaBundle\Entity</argument>
+                </call>
+                <call method="addDriver">
+                  <argument type="service">
+                    <service class="Doctrine\ORM\Mapping\Driver\AnnotationDriver" public="false">
+                      <argument type="service" id="annotation_reader"/>
+                      <argument type="collection">
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/OfertaBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/CiudadBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/TiendaBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/UsuarioBundle/Entity</argument>
+                      </argument>
+                    </service>
+                  </argument>
+                  <argument>Cupon\CiudadBundle\Entity</argument>
+                </call>
+                <call method="addDriver">
+                  <argument type="service">
+                    <service class="Doctrine\ORM\Mapping\Driver\AnnotationDriver" public="false">
+                      <argument type="service" id="annotation_reader"/>
+                      <argument type="collection">
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/OfertaBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/CiudadBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/TiendaBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/UsuarioBundle/Entity</argument>
+                      </argument>
+                    </service>
+                  </argument>
+                  <argument>Cupon\TiendaBundle\Entity</argument>
+                </call>
+                <call method="addDriver">
+                  <argument type="service">
+                    <service class="Doctrine\ORM\Mapping\Driver\AnnotationDriver" public="false">
+                      <argument type="service" id="annotation_reader"/>
+                      <argument type="collection">
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/OfertaBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/CiudadBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/TiendaBundle/Entity</argument>
+                        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/UsuarioBundle/Entity</argument>
+                      </argument>
+                    </service>
+                  </argument>
+                  <argument>Cupon\UsuarioBundle\Entity</argument>
+                </call>
+              </service>
             </argument>
           </call>
           <call method="setProxyDir">
@@ -2622,6 +2709,9 @@
       <argument type="service" id="templating.loader"/>
       <argument type="service" id="debug.stopwatch"/>
       <argument type="service" id="templating.globals"/>
+      <call method="setCharset">
+        <argument>UTF-8</argument>
+      </call>
       <call method="setHelpers">
         <argument type="collection">
           <argument key="slots">templating.helper.slots</argument>
@@ -2645,7 +2735,6 @@
       <argument type="service" id="templating.name_parser"/>
       <argument type="service" id="templating.locator"/>
       <argument type="service" id="debug.stopwatch"/>
-      <argument type="service" id="templating.globals"/>
       <call method="setDefaultEscapingStrategy">
         <argument type="collection">
           <argument type="service" id="templating"/>
@@ -2713,6 +2802,22 @@
       <call method="addPath">
         <argument>/home/web/Proyectos/mi-cupon.com/vendor/doctrine/doctrine-bundle/Doctrine/Bundle/DoctrineBundle/Resources/views</argument>
         <argument>Doctrine</argument>
+      </call>
+      <call method="addPath">
+        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/OfertaBundle/Resources/views</argument>
+        <argument>Oferta</argument>
+      </call>
+      <call method="addPath">
+        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/CiudadBundle/Resources/views</argument>
+        <argument>Ciudad</argument>
+      </call>
+      <call method="addPath">
+        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/TiendaBundle/Resources/views</argument>
+        <argument>Tienda</argument>
+      </call>
+      <call method="addPath">
+        <argument>/home/web/Proyectos/mi-cupon.com/src/Cupon/UsuarioBundle/Resources/views</argument>
+        <argument>Usuario</argument>
       </call>
       <call method="addPath">
         <argument>/home/web/Proyectos/mi-cupon.com/src/Acme/DemoBundle/Resources/views</argument>
@@ -2789,7 +2894,7 @@
       </argument>
       <argument type="service" id="swiftmailer.mailer.default.transport.eventdispatcher"/>
       <call method="setHost">
-        <argument>127.0.0.1</argument>
+        <argument>localhost</argument>
       </call>
       <call method="setPort">
         <argument>25</argument>

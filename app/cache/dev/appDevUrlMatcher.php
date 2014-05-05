@@ -135,6 +135,55 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
 
         }
 
+        // usuario_homepage
+        if (0 === strpos($pathinfo, '/hello') && preg_match('#^/hello/(?P<name>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'usuario_homepage')), array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::indexAction',));
+        }
+
+        // tienda_portada
+        if (preg_match('#^/(?P<ciudad>[^/]++)/tiendas/(?P<tienda>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'tienda_portada')), array (  '_controller' => 'Cupon\\TiendaBundle\\Controller\\DefaultController::portadaAction',));
+        }
+
+        // ciudad_homepage
+        if (0 === strpos($pathinfo, '/hello') && preg_match('#^/hello/(?P<name>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'ciudad_homepage')), array (  '_controller' => 'Cupon\\CiudadBundle\\Controller\\DefaultController::indexAction',));
+        }
+
+        // ciudad_cambiar
+        if (0 === strpos($pathinfo, '/ciudad/cambiar-a') && preg_match('#^/ciudad/cambiar\\-a\\-(?P<ciudad>.+)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'ciudad_cambiar')), array (  '_controller' => 'Cupon\\CiudadBundle\\Controller\\DefaultController::cambiarAction',));
+        }
+
+        // ciudad_recientes
+        if (preg_match('#^/(?P<ciudad>[^/]++)/recientes$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'ciudad_recientes')), array (  '_controller' => 'Cupon\\CiudadBundle\\Controller\\DefaultController::recientesAction',));
+        }
+
+        // oferta
+        if (preg_match('#^/(?P<ciudad>[^/]++)/ofertas/(?P<slug>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'oferta')), array (  '_controller' => 'Cupon\\OfertaBundle\\Controller\\DefaultController::ofertaAction',));
+        }
+
+        // pagina_estatica
+        if (0 === strpos($pathinfo, '/sitio') && preg_match('#^/sitio/(?P<pagina>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'pagina_estatica')), array (  '_controller' => 'Cupon\\OfertaBundle\\Controller\\SitioController::estaticaAction',));
+        }
+
+        // _portada
+        if (rtrim($pathinfo, '/') === '') {
+            if (substr($pathinfo, -1) !== '/') {
+                return $this->redirect($pathinfo.'/', '_portada');
+            }
+
+            return array (  '_controller' => 'Symfony\\Bundle\\FrameworkBundle\\Controller\\RedirectController::redirectAction',  'route' => 'portada',  'ciudad' => 'barcelona',  '_route' => '_portada',);
+        }
+
+        // portada
+        if (preg_match('#^/(?P<ciudad>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'portada')), array (  '_controller' => 'Cupon\\OfertaBundle\\Controller\\DefaultController::portadaAction',));
+        }
+
         // _welcome
         if (rtrim($pathinfo, '/') === '') {
             if (substr($pathinfo, -1) !== '/') {

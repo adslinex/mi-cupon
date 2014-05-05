@@ -114,7 +114,10 @@ Ok
 
 $ sudo chmod -R 777 app/logs
 $ sudo chmod -R 777 app/cache
-(si no da error en el navegador)
+(si no, da error en el navegador)
+
+Nota: De cuando en cuando, como unas veces se trabaja como root y otras con usuario antonio, no esta de más hacer propietario a antonio de todos los ficheros
+$ sudo chown -R antonio:antonio /home/web/Proyectos/
 
 y en el navegador: http://mi-cupon.com/app_dev.php
 
@@ -182,5 +185,178 @@ To https://github.com/adslinex/mi-cupon.git
 Debería haber creado antes el .gitignore (sirve para indicarle que no suba determinados directorios, como los vendor)
 No me aclaro yo con git, svn lo llevaba mejor. Voy a instalar eclipse. No va eclipse con Git, na
 Voy a seguir las instrucciones del libro:
+# crear la nueva rama
+$ git checkout -b <nombre-de-rama>
+ 
+# ... realizar cambios en el código ...
+ 
+# añadir los nuevos archivos creados
+$ git add .
+ 
+# commit de todos los cambios realizados
+$ git commit -a
+ 
+# volver a la rama principal
+$ git checkout master
+ 
+# fusionar los cambios de la nueva rama en la principal
+$ git merge <nombre-de-rama>
+ 
+# subir los cambios al repositorio remoto
+$ git push origin master
+ 
+# ver el historial de los últimos cambios producidos
+$ git log
+
+En mi proyecto:
+Guardo este txt dentro drl proyecto
+$ git checkout -b "rama_de_trabajo"
+Switched to a new branch 'rama_de_trabajo'
+$ git add Diario\ de\ Symfony
+$ git commit -a -m "trabajando en la rama de trabajo"
+[rama_de_trabajo 936efd5] trabajando en la rama de trabajo
+ 1 file changed, 186 insertions(+)
+ create mode 100644 Diario de Symfony
+
+Sigo con mi-cupon.com
+los paramentros de la base de datos y los que hay en parameters.yml los cojo de otra instalaciónanterior.
+# This file is auto-generated during the composer install
+parameters:
+    database_driver: pdo_mysql
+    database_host: localhost
+    database_port: null
+    database_name: mi-cupon
+    database_user: mi-cupon
+    database_password: mi-cupon
+    mailer_transport: smtp
+    mailer_host: localhost
+    mailer_user: null
+    mailer_password: null
+    locale: es
+    secret: 3095c57ee1675bd751e4f158dd48992dae4e8004
+
+3.3 Actualizando Symfony2
+
+$ composer update
+
+Casca. Siempre casca
+Siguiendo el libro, dos capitulos mas adelante:
+Si esta solución no funciona o si tu sistema no soporta la opción +a para el comando chmod, ejecuta los siguientes comandos:
+
+$ HTTPDUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx' | grep -v root | head -1 | cut -d\  -f1`
+ 
+$ sudo setfacl -Rn -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX app/cache app/logs
+$ sudo setfacl -dRn -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX app/cache app/log
+
+Esta tampoco, era por el sudo. (hecha un rato)
+$ sudo composer update
+[sudo] password for antonio: 
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+  - Removing monolog/monolog (1.9.0)
+  - Installing monolog/monolog (1.9.1)
+    Downloading: 100%         
+
+Writing lock file
+Generating autoload files
+Updating the "app/config/parameters.yml" file
+Clearing the cache for the dev environment with debug true
+Installing assets using the hard copy option
+Installing assets for Symfony\Bundle\FrameworkBundle into web/bundles/framework
+Installing assets for Acme\DemoBundle into web/bundles/acmedemo
+Installing assets for Sensio\Bundle\DistributionBundle into web/bundles/sensiodistribution
+
+3.4.2 Creando el resto de bundles Con estas órdenes de consola están los bundles creados
+$ php app/console  generate:bundle --namespace=Cupon/OfertaBundle --bundle-name=OfertaBundle --dir=src/ --format=yml --no-interaction
+
+$ php app/console  generate:bundle --namespace=Cupon/CiudadBundle --bundle-name=CiudadBundle --dir=src/ --format=yml --no-interaction
+ 
+$ php app/console  generate:bundle --namespace=Cupon/TiendaBundle --bundle-name=TiendaBundle --dir=src/ --format=yml --no-interaction
+ 
+$ php app/console  generate:bundle --namespace=Cupon/UsuarioBundle --bundle-name=UsuarioBundle --dir=src/ --format=yml --no-interaction
+
+5. La base de datos
+5.1 Entidades. Las entidades las he copiado de otras veces
+5.2.3 Creando la base de datos y sus tablas
+Borro la BD (phpMyAdmin) y la vuelvo a crear
+$ php app/console doctrine:database:create
+$ php app/console doctrine:schema:create
+5.4 Archivos de datos o fixtures. Los fixtures igual, estoy usando los definitivos
+5.4.1 Instalando los fixtures de Doctrine2
+Abre el archivo composer.json que se encuentra en el directorio raíz del proyecto y añade las siguientes dependencias en la opción require:
+
+{
+    ...
+ 
+    "require": {
+        ...
+        "doctrine/doctrine-fixtures-bundle": "dev-master",
+        "doctrine/data-fixtures": "dev-master"
+    }
+}
+
+$ sudo composer update
+php app/console doctrine:fixtures:load
+Casca
+Hay que añadir en el fichero AppKernel.php 
+new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
+casca
+Copio la carpeta de Utilidades del cupon antiguo Cupon\OfertaBundle\Util\Util
+Casca
+Ciudades ha pasado pero Ciudades dice que no tiene encoder, debe ser que no esté bien configurado el id de Tienda
+Casca
+No lo consigo. O tengo que crear todos los Fixtures de cero o tiro para delante hasta que vuelvan a tocar el tema. Hago la segundo.
+Actualmente la BD está vacia.
+Así que la portada muestra un mensaje de no se ha encontrado la oferta del día
+
+Muchos capítulos haciendo lo que pone el librro sin poder probar. La BD sigue vacia
+
+Bueno, tras muchas horas de trabajo, tengo página.
+He rehecho los fixtures mezclando codigo del libro y de github y funcionan. Los del libro, tal como están a estas alturas del libro, no funcionan (no ligan ofertas con ciudades y tiendas) y los de github dan errores porque faltaran cosas que implementar. Total, que he borrado la BD desde phpMyAdmin y:
+$ php app/console doctrine:database:create
+$ php app/console doctrine:s:create
+php app/console d:f:l
+
+He corregido tropecientos errores de visualización
+Ahoara mismo estoy en:
+7.2 Hojas de estilo y archivos JavaScript
+
+He descargado las hojas de estilo y demás y 
+$ php app/console assets:install
+y todo bien sin saber muy bien lo que estoy haciendo, pero Ok
+
+7.3 Seleccionando la ciudad activa
+No se veía la desplegable (faltaba de cerrar una etiqueta en el fronted (/h1)
+Ok
+
+7.4 Creando la página de detalle de una oferta
+Ok
+7.5 Completando las plantillas con extensiones de Twig
+Este punto del libro está poco revisado (deben haber llegado pocos aquí)
+Mete parameter.ini donde es yml
+en la plantilla oferta habal de modificar la seccion estado cuando no se ha creado antes ¿?. Bueno quizás estubiera en la portada inicial y me la he cargado yo mismo. La reconpongo como puedo para que funcione. Quizás no, me ha había cargado. Lo recompongo de la portada.html.twig original y funciona
+
+He rehecho los fixtures (he copiado ofertas de github y ahora funciona)(problemas con la fecha Expiracion, se utiliza en muchas formulas y yo la había puesto a todas la misma)
+OK
+7.6 Creando la página de ofertas recientes de una ciudad
+Acaba diciendo que ya se puede utilizar Ofertas recientes pero no funciona. Hay que incluir la accione en el fronted.html.twig
+<li><a href="{{ path('ciudad_recientes', { 'ciudad': ciudadSeleccionada }) }}">Ofertas recientes</a></li>
+Ok
+7.7 Creando la portada de cada tienda
+Lo mismo. Hay que enlazar la accion a los enlaces Tienda y no lo hace
+oferta.html.twig
+    <p>
+        <a href="{{ path('tienda_portada', { 'ciudad': oferta.ciudad.slug, 'tienda': oferta.tienda.slug }) }}">{{ oferta.tienda.nombre }}</a>
+        {{ oferta.tienda.direccion | nl2br }}
+    </p>
+
+minioferta.html.twig
+<p>{{ "Disfruta de la oferta en" | trans }} <a href="{{ path('tienda_portada', { 'ciudad': oferta.ciudad.slug, 'tienda' : oferta.tienda.slug }) }}">{{ oferta.tienda.nombre }}</a></p>
+
+7.8 Refactorización final
+Completo lo indicado en el libro
+Ok
+
+Hasta hemos llegado (varias veces y ahrora es cuando casca) voy a intentar subir una versión con git para no perderme a partir de ahora.
 
 

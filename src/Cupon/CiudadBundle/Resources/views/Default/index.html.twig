@@ -1,0 +1,9 @@
+{% set contactos = [ 
+    { 'nombre': 'María',   'apellidos' : '...' },
+    { 'nombre': 'Alberto', 'apellidos' : '...' },
+    { 'nombre': 'José',    'apellidos' : '...' },
+] %}
+ 
+{% for contacto in contactos|sort %}
+    {{ contacto.nombre }}
+{% endfor %}
