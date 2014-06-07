@@ -358,5 +358,53 @@ Completo lo indicado en el libro
 Ok
 
 Hasta hemos llegado (varias veces y ahrora es cuando casca) voy a intentar subir una versión con git para no perderme a partir de ahora.
+En github hay que crear a mano un branch rama_de_trabajo
+
+$ git add .
+$ git commit -m " TODO FUNCIONANDO. Voy a empezar el Capítulo 8. Registrando usuarios"
+$ git push
+$ git checkout master
+$ git merge "rama_de_trabajo"
+$ git push
+Username for 'https://github.com': adslinex
+Password for 'https://adslinex@github.com': 
+To https://github.com/adslinex/mi-cupon.git
+   c65a640..b4aecfa  master -> master
+Todo arriba. Para seguir trabajando vuelvo a pasar a la rama_de_trabajo
+$ git checkout rama_de_trabajo
+...
+Switched to branch 'rama_de_trabajo'
+
+8.1 Creando la página de compras recientes
+
+"No obstante, si pruebas la página en el navegador (http://cupon.local/app_dev.php/usuario/compras/)"
+Si pero además del error del que habla el libro, tenemos otro por la barra final. Este tema está resuelto en 4.4 Configurando la barra del final en las URL, pero como no se ha vuelto a hacer nada si ponemos la barra final casca.
+Si ponemos en el Controller  $usuario_id = 1; y no miramos si ese usuario tiene compras, y no las tiene, la página saldrá en blanco. Lo cambio por  $usuario_id = 2;
+Ok
+
+8.3 Creando proveedores de usuarios
+
+// src/Cupon/UsuarioBundle/Entity/Usuario.php
+namespace Cupon\UsuarioBundle\Entity;
+ 
+use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\ORM\Mapping as ORM;
+ 
+/**
+ * Cupon\UsuarioBundle\Entity\Usuario
+ *
+ * @ORM\Entity
+ */
+class Usuario implements UserInterface
+
+Esta, mas el punto anterior 8.2 Encoding es el que hace que fallen los Fixutes de github al inicio del libro.
+Pero tal como está creo que tiene un error. No incluye la línea:
+* @ORM\Entity(repositoryClass="Cupon\UsuarioBundle\Entity\UsuarioRepository") y dejarían de funcionar las funciones del Repository
+
+Despues de estas modificaciones hago la prueba de BOORAR la BD y volver a cargar todo y funciona. Quizás ahora los Fixtures de github funcionan. No lo pruebo.
+Ok
+
+8.4 Añadiendo el formulario de login
+
 
 

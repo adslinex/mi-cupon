@@ -5,17 +5,25 @@ namespace Cupon\UsuarioBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Cupon\CiudadBundle\Entity\Ciudad;
 use Cupon\UsuarioBundle\Entity\Usuario;
 
 
-class Usuarios extends AbstractFixture implements OrderedFixtureInterface
+class Usuarios extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
     public function getOrder()
     {
         return 40;
     }
-
+    private $container;
+ 
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+ 
     public function load(ObjectManager $manager)
     {
         // Obtener todas las ciudades de la base de datos
@@ -29,10 +37,19 @@ class Usuarios extends AbstractFixture implements OrderedFixtureInterface
             $usuario->setApellidos($ciudad.'guez');
             $usuario->setEmail('Pedro'.$i.$ciudad.'guez'.'@localhost');
 
-            $usuario->setSalt(base_convert(sha1(uniqid(mt_rand(), true)), 16, 36));
 
+   
+ 
+            $passwordEnClaro = 'usuario'.$i;
+            $salt = md5(time());
+ 
+            $encoder = $this->container->get('security.encoder_factory')
+                            ->getEncoder($usuario);
+            $password = $encoder->encodePassword($passwordEnClaro, $salt);
+ 
+            $usuario->setPassword($password);
+            $usuario->setSalt($salt);
 
-            $usuario->setPassword('Pedro'.$i.'Pedro'.$i);
 
             $usuario->setDireccion('Calle '.$i);
             $usuario->setCiudad($ciudad);
