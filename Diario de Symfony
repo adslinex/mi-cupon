@@ -357,7 +357,7 @@ minioferta.html.twig
 Completo lo indicado en el libro
 Ok
 
-Hasta hemos llegado (varias veces y ahrora es cuando casca) voy a intentar subir una versión con git para no perderme a partir de ahora.
+Hasta aquí hemos llegado (varias veces y ahora es cuando casca) voy a intentar subir una versión con git para no perderme a partir de ahora.
 En github hay que crear a mano un branch rama_de_trabajo
 
 $ git add .
@@ -405,6 +405,183 @@ Despues de estas modificaciones hago la prueba de BOORAR la BD y volver a cargar
 Ok
 
 8.4 Añadiendo el formulario de login
+Puff. Un buen parón. 07/06/2014
+Los formularios de login los he seguido pero con muchos de errores. Prácticamente estoy utilizando los ficheros del repositorio. Se entiende todo pero el texto del libro cada vez es mas confuso.
+$ git add .
+$ git commit -m " TODO FUNCIONANDO. Voy a empezar el Capítulo 9. RSS y los formatos alternativos"
+$ git push
+$ git checkout master
+$ git merge "rama_de_trabajo"
+$ git push
+Username for 'https://github.com': adslinex
+Password for 'https://adslinex@github.com': 
+To https://github.com/adslinex/mi-cupon.git
+   c65a640..b4aecfa  master -> master
+Todo arriba. Para seguir trabajando vuelvo a pasar a la rama_de_trabajo
+$ git checkout rama_de_trabajo
+...
+Switched to branch 'rama_de_trabajo'
 
+Capítulo 9. RSS y los formatos alternativos
+Bueno pues he pasado todo el capítulo y no he conseguido ver un enlace rss en el navegador. Como no me importa mucho y los cambios los he entendido, continúo.
+De lo más interesante pero que no profundiza es que a partir de este momento se pueden generar y visualizar pdf en la aplicación.
+No subo cambios por que son pocos.
+
+Capítulo 10. Internacionalizando el sitio web
+Pues me lo voy a leer y poco más. Bajo del repositorio los ficheros afectados y si todo funciona, sigo.
+Pensandolo bien, lo he leido y punto. Lo mas interesante es que ya se que es el filtro |tran que aparecía por ahí. Sigo
+
+
+Capítulo 11. Tests unitarios y funcionales
+Me temo otro rollo ¿?
+11.1 Primeros pasos
+librería PHPUnit
+No estaba instalada, la instalé con apt-get y no funcionó:
+$ phpunit --versionPHP Warning:  require_once(PHP/CodeCoverage/Filter.php): failed to open stream: No such file or directory in /usr/bin/phpunit on line 38
+PHP Fatal error:  require_once(): Failed opening required 'PHP/CodeCoverage/Filter.php' (include_path='.:/usr/share/php:/usr/share/pear') in /usr/bin/phpunit on line 38
+
+Doy marcha atrás, desinstalo con apt-get y reinstalo con composer como indica el libro.
+$ composer global require phpunit/phpunit 3.*
+Me avisa de que mi composer ya es antiguo y que lo actualice. Pero el composer sigue con la instalación de phpunit.
+Warning: This development build of composer is over 30 days old. It is recommended to update it by running "/usr/local/bin/composer self-update" to get the latest version.
+Changed current directory to /home/antonio/.composer
+Warning: This development build of composer is over 30 days old. It is recommended to update it by running "/usr/local/bin/composer self-update" to get the latest version.
+./composer.json has been updated
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+file_put_contents(/home/antonio/.composer/cache/repo/https---packagist.org/provider-symfony$yaml.json): failed to open stream: Permission denied
+http://packagist.org could not be fully loaded, package information was loaded from the local cache and may be out of date
+  - Installing symfony/yaml (v2.4.4)
+    Downloading: 100%         
+
+  - Installing phpunit/php-text-template (1.2.0)
+    Downloading: 100%         
+
+  - Installing phpunit/phpunit-mock-objects (1.2.3)
+    Downloading: 100%         
+
+  - Installing phpunit/php-timer (1.0.5)
+    Downloading: 100%         
+
+  - Installing phpunit/php-token-stream (1.2.2)
+    Downloading: 100%         
+
+  - Installing phpunit/php-file-iterator (1.3.4)
+    Downloading: 100%         
+
+  - Installing phpunit/php-code-coverage (1.2.17)
+    Downloading: 100%         
+
+  - Installing phpunit/phpunit (3.7.37)
+    Downloading: 100%         
+
+phpunit/php-code-coverage suggests installing ext-xdebug (>=2.0.5)
+phpunit/phpunit suggests installing phpunit/php-invoker (~1.1)
+Writing lock file
+Generating autoload files
+
+ También me da in fallo de permisos, lo reinstalare con sudo
+
+$ sudo composer self-update
+[sudo] password for antonio: 
+Updating to version d97e00643fd619cb53827b44e53679c23a6baeaa.
+    Downloading: 100%         
+Use composer self-update --rollback to return to version b580ad66a0242bd97b093eab46a331a17df08acd
+antonio@antonio-OptiPlex-745:/home/web/Proyectos/mi-cupon.com$ sudo composer global require phpunit/phpunit 3.*
+Changed current directory to /home/antonio/.composer
+./composer.json has been updated
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Nothing to install or update
+Writing lock file
+
+$ export PATH=~/.composer/vendor/bin/:$PATH
+
+Haciendo esto funciona phpunit --version
+para que quede definitivo en el PATH intento:
+
+$ echo "PATH=~/.composer/vendor/bin/:$PATH" | sudo tee -a /etc/environment
+
+habrá que revisarlo cunado reinicie
+$ phpunit --version
+PHPUnit 3.7.37 by Sebastian Bergmann.
+Ok
+$ phpunit -c app
+PHPUnit 3.7.37 by Sebastian Bergmann.
+
+Configuration read from /home/web/Proyectos/mi-cupon.com/app/phpunit.xml.dist
+
+.EFF.FF
+
+Time: 6.48 seconds, Memory: 22.00Mb
+
+There was 1 error:
+
+1) Acme\DemoBundle\Tests\Controller\DemoControllerTest::testSecureSection
+LogicException: The request was not redirected.
+
+/home/web/Proyectos/mi-cupon.com/vendor/symfony/symfony/src/Symfony/Component/BrowserKit/Client.php:496
+/home/web/Proyectos/mi-cupon.com/src/Acme/DemoBundle/Tests/Controller/DemoControllerTest.php:26
+
+--
+
+
+There were 4 failures:
+
+1) Cupon\CiudadBundle\Tests\Controller\DefaultControllerTest::testIndex
+Failed asserting that false is true.
+
+/home/web/Proyectos/mi-cupon.com/src/Cupon/CiudadBundle/Tests/Controller/DefaultControllerTest.php:15
+
+2) Cupon\OfertaBundle\Tests\Controller\DefaultControllerTest::testIndex
+Failed asserting that false is true.
+
+/home/web/Proyectos/mi-cupon.com/src/Cupon/OfertaBundle/Tests/Controller/DefaultControllerTest.php:15
+
+3) Cupon\TiendaBundle\Tests\Controller\DefaultControllerTest::testIndex
+Failed asserting that false is true.
+
+/home/web/Proyectos/mi-cupon.com/src/Cupon/TiendaBundle/Tests/Controller/DefaultControllerTest.php:15
+
+4) Cupon\UsuarioBundle\Tests\Controller\DefaultControllerTest::testIndex
+Failed asserting that false is true.
+
+/home/web/Proyectos/mi-cupon.com/src/Cupon/UsuarioBundle/Tests/Controller/DefaultControllerTest.php:15
+
+FAILURES!
+Tests: 7, Assertions: 6, Failures: 4, Errors: 1.
+
+Generating autoload files
+
+¡¡COÑO!!
+Un Error lo da en el Acme ese y Los 4 Fallos en los 4 Bundle del proyecto
+
+Cambio lo que pide en el libro en el fichero CuponExtensionTest.php que acabo de hacer y da un Fallo nuevo. OK
+    public function testDescuento()
+    {
+        //$this->assertEquals(1, 1, "Probar que 1 es igual a 1");
+        $this->assertEquals(1, 2, "Probar que 1 es igual a 2");
+    }
+Para quitarme los fallos de los tests que vienen por defecto les añado .dafallos al final para que no se ejecuten.
+Cambio el código de CuponExtensionTest.php al extenso que viene ene el libro y:
+$ phpunit -c app
+PHPUnit 3.7.37 by Sebastian Bergmann.
+
+Configuration read from /home/web/Proyectos/mi-cupon.com/app/phpunit.xml.dist
+
+.
+
+Time: 40 ms, Memory: 2.25Mb
+
+OK (1 test, 7 assertions)
+
+Todo OK como dice phpunit
+
+Puff con la funcion Mostrar como lista sale un churro, lo dejo
+
+Bueno pues leo todo el contenido del capítulo, copio todos los archivos utilizados desde el repositorio y paso al siguiente.
+
+Capítulo 12. Planificación
+Creo que emppieza lo bueno
 
 

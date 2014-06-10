@@ -1,14 +1,14 @@
 UsuarioBundle:
     resource: "@UsuarioBundle/Resources/config/routing.yml"
-    prefix:   /usuario
+    prefix:   /{_locale}/usuario
 
 tienda:
     resource: "@TiendaBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /{_locale}
 
 ciudad:
     resource: "@CiudadBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /{_locale}
 
 #oferta:
 #    resource: "@OfertaBundle/Resources/config/routing.yml"
@@ -24,16 +24,20 @@ oferta:
 #    defaults: { _controller: FrameworkBundle:Template:template }
 #  ESTO NO VA, dejo pagina_estatica
 pagina_estatica:
-    path:     /sitio/{pagina}
+    path:     /{_locale}/sitio/{pagina}
     defaults: { _controller: OfertaBundle:Sitio:estatica }
 
-# Ruta completa de la portada (con el slug de la ciudad)
-_portada:
-     path:     /
-     defaults: { _controller: FrameworkBundle:Redirect:redirect, route: portada, ciudad: '%cupon.ciudad_por_defecto%' }
- 
 # Ruta de la portada completa del sitio (con _locale y el slug de la ciudad)
 portada:
-    path:     /{ciudad}
-    defaults: { _controller: OfertaBundle:Default:portada }
+    pattern: /{_locale}/{ciudad}
+    defaults: { _controller: OfertaBundle:Default:portada, ciudad: %cupon.ciudad_por_defecto%, _locale: es }
+    requirements:
+        _locale: en|es
+
+# Ruta de la portada básica del sitio (sin ningún parámetro)
+# esta ruta es opcional, ya que la aplicación puede funcionar bien
+# solamente con la ruta 'portada' y sus valores por defecto
+_portada:
+     pattern: /
+     defaults: { _controller: FrameworkBundle:Redirect:redirect, route: portada, ciudad: '%cupon.ciudad_por_defecto%' }
 

@@ -135,62 +135,48 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
 
         }
 
-        if (0 === strpos($pathinfo, '/usuario')) {
-            // usuario_registro
-            if ($pathinfo === '/usuario/registro') {
-                return array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::registroAction',  '_route' => 'usuario_registro',);
-            }
+        // usuario_registro
+        if (preg_match('#^/(?P<_locale>[^/]++)/usuario/registro$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'usuario_registro')), array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::registroAction',));
+        }
 
-            // usuario_perfil
-            if ($pathinfo === '/usuario/perfil') {
-                return array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::perfilAction',  '_route' => 'usuario_perfil',);
-            }
+        // usuario_perfil
+        if (preg_match('#^/(?P<_locale>[^/]++)/usuario/perfil$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'usuario_perfil')), array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::perfilAction',));
+        }
 
-            // usuario_compras
-            if ($pathinfo === '/usuario/compras') {
-                return array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::comprasAction',  '_route' => 'usuario_compras',);
-            }
+        // usuario_compras
+        if (preg_match('#^/(?P<_locale>[^/]++)/usuario/compras$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'usuario_compras')), array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::comprasAction',));
+        }
 
-            if (0 === strpos($pathinfo, '/usuario/log')) {
-                if (0 === strpos($pathinfo, '/usuario/login')) {
-                    // usuario_login
-                    if ($pathinfo === '/usuario/login') {
-                        return array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::loginAction',  '_route' => 'usuario_login',);
-                    }
+        // usuario_login
+        if (preg_match('#^/(?P<_locale>[^/]++)/usuario/login$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'usuario_login')), array (  '_controller' => 'Cupon\\UsuarioBundle\\Controller\\DefaultController::loginAction',));
+        }
 
-                    // usuario_login_check
-                    if ($pathinfo === '/usuario/login_check') {
-                        return array('_route' => 'usuario_login_check');
-                    }
+        // usuario_login_check
+        if (preg_match('#^/(?P<_locale>[^/]++)/usuario/login_check$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'usuario_login_check')), array ());
+        }
 
-                }
-
-                // usuario_logout
-                if ($pathinfo === '/usuario/logout') {
-                    return array('_route' => 'usuario_logout');
-                }
-
-            }
-
+        // usuario_logout
+        if (preg_match('#^/(?P<_locale>[^/]++)/usuario/logout$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'usuario_logout')), array ());
         }
 
         // tienda_portada
-        if (preg_match('#^/(?P<ciudad>[^/]++)/tiendas/(?P<tienda>[^/]++)$#s', $pathinfo, $matches)) {
+        if (preg_match('#^/(?P<_locale>[^/]++)/(?P<ciudad>[^/]++)/tiendas/(?P<tienda>[^/]++)$#s', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'tienda_portada')), array (  '_controller' => 'Cupon\\TiendaBundle\\Controller\\DefaultController::portadaAction',));
         }
 
-        // ciudad_homepage
-        if (0 === strpos($pathinfo, '/hello') && preg_match('#^/hello/(?P<name>[^/]++)$#s', $pathinfo, $matches)) {
-            return $this->mergeDefaults(array_replace($matches, array('_route' => 'ciudad_homepage')), array (  '_controller' => 'Cupon\\CiudadBundle\\Controller\\DefaultController::indexAction',));
-        }
-
         // ciudad_cambiar
-        if (0 === strpos($pathinfo, '/ciudad/cambiar-a') && preg_match('#^/ciudad/cambiar\\-a\\-(?P<ciudad>.+)$#s', $pathinfo, $matches)) {
+        if (preg_match('#^/(?P<_locale>[^/]++)/ciudad/cambiar\\-a\\-(?P<ciudad>.+)$#s', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'ciudad_cambiar')), array (  '_controller' => 'Cupon\\CiudadBundle\\Controller\\DefaultController::cambiarAction',));
         }
 
         // ciudad_recientes
-        if (preg_match('#^/(?P<ciudad>[^/]++)/recientes$#s', $pathinfo, $matches)) {
+        if (preg_match('#^/(?P<_locale>[^/]++)/(?P<ciudad>[^/]++)/recientes$#s', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'ciudad_recientes')), array (  '_controller' => 'Cupon\\CiudadBundle\\Controller\\DefaultController::recientesAction',));
         }
 
@@ -200,8 +186,13 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
         }
 
         // pagina_estatica
-        if (0 === strpos($pathinfo, '/sitio') && preg_match('#^/sitio/(?P<pagina>[^/]++)$#s', $pathinfo, $matches)) {
+        if (preg_match('#^/(?P<_locale>[^/]++)/sitio/(?P<pagina>[^/]++)$#s', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'pagina_estatica')), array (  '_controller' => 'Cupon\\OfertaBundle\\Controller\\SitioController::estaticaAction',));
+        }
+
+        // portada
+        if (preg_match('#^/(?P<_locale>en|es)?(?:/(?P<ciudad>[^/]++))?$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'portada')), array (  '_controller' => 'Cupon\\OfertaBundle\\Controller\\DefaultController::portadaAction',  'ciudad' => 'barcelona',  '_locale' => 'es',));
         }
 
         // _portada
@@ -211,11 +202,6 @@ class appDevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
             }
 
             return array (  '_controller' => 'Symfony\\Bundle\\FrameworkBundle\\Controller\\RedirectController::redirectAction',  'route' => 'portada',  'ciudad' => 'barcelona',  '_route' => '_portada',);
-        }
-
-        // portada
-        if (preg_match('#^/(?P<ciudad>[^/]++)$#s', $pathinfo, $matches)) {
-            return $this->mergeDefaults(array_replace($matches, array('_route' => 'portada')), array (  '_controller' => 'Cupon\\OfertaBundle\\Controller\\DefaultController::portadaAction',));
         }
 
         // _welcome

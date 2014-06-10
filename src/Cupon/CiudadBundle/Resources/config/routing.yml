@@ -1,13 +1,11 @@
-ciudad_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: CiudadBundle:Default:index }
-
+# Ruta para cambiar la ciudad activa en la aplicación
 ciudad_cambiar:
-    pattern:  /ciudad/cambiar-a-{ciudad}
+    pattern: /ciudad/cambiar-a-{ciudad}
     defaults: { _controller: CiudadBundle:Default:cambiar }
     requirements:
-        ciudad:  .+
+        ciudad: .+
 
+# Ruta para ver todas las ofertas recientes publicadas en la ciudad indicada
 ciudad_recientes:
-    path:     /{ciudad}/recientes
+    pattern: /{ciudad}/recientes
     defaults: { _controller: CiudadBundle:Default:recientes }
